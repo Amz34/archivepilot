@@ -7,7 +7,7 @@ name = "archivepilot"
 version = "0.1.0"
 description = "Your data, one private AI archive. Local-first, zero-dependency, EN + AR full-text search + AI answers."
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 license = { text = "MIT" }
 keywords = ["archive", "privacy", "search", "arabic", "ai", "local-first", "sqlite", "fts5"]
 classifiers = [
