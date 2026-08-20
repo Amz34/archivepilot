@@ -1,0 +1,14 @@
+# Byte-compiled / cache
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+
+# Archive databases (user data — never commit)
+*.db
+*.db-journal
+
+# Env
+.env
+.env.*
