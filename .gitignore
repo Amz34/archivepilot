@@ -12,3 +12,6 @@ dist/
 # Env
 .env
 .env.*
+
+# devtunnel CLI version marker (created when running devtunnel from here)
+DevTunnels/
