@@ -99,6 +99,12 @@ def build_parser() -> argparse.ArgumentParser:
     st = sub.add_parser("stats", help="archive statistics")
     st.set_defaults(fn=cmd_stats)
 
+    # Microsoft 365 ingestion (SharePoint / OneDrive / Teams). Lives in its
+    # own module because it talks to Microsoft Graph; imported lazily so the
+    # core CLI never loads the Graph transport.
+    from .ingest import add_parser as add_ingest_parser
+    add_ingest_parser(sub, default_db=DEFAULT_DB)
+
     return p
 
 

@@ -57,6 +57,62 @@ entries — the archive works fully offline.
 | CSV / TSV | `--csv file.csv` | one searchable record per row |
 | Notes / Markdown | `--text notes.md` | one item per paragraph |
 | Anything | `--stdin` | pipe it in |
+| Microsoft 365 | `ingest --source sharepoint` | SharePoint / OneDrive drives + Teams messages via Graph |
+
+## 🏢 Microsoft 365 ingestion (SharePoint · OneDrive · Teams)
+
+Enterprise knowledge lives in M365. `ingest` pulls it into the same local
+archive, so client document libraries and Teams conversations are searchable
+in **English and Arabic** alongside everything else.
+
+App-only (client credentials) auth — read-only, no user sign-in, no OAuth
+browser dance:
+
+```bash
+export MSGRAPH_TENANT_ID=...      # directory (tenant) id
+export MSGRAPH_CLIENT_ID=...      # app registration client id
+export MSGRAPH_CLIENT_SECRET=...  # app registration secret (env only)
+
+# 1. See what would be indexed — no writes, no database needed
+python3 -m archivepilot ingest --source sharepoint --site contoso.sharepoint.com,<site-guid>,<web-guid> --dry-run
+
+# 2. Index a whole site (every document library)
+python3 -m archivepilot ingest --source sharepoint --site <site-id>
+
+# 3. Index one drive (e.g. a user's OneDrive)
+python3 -m archivepilot ingest --source onedrive --drive <drive-id>
+
+# 4. Index Teams channel messages (replies included)
+python3 -m archivepilot ingest --source teams --team <team-id> [--channel <channel-id>] [--no-replies]
+
+# Then it's all just ArchivePilot
+python3 -m archivepilot search "العقد الجديد"
+python3 -m archivepilot ask "what did we agree on the Riyadh deployment?"
+```
+
+Setup (Microsoft Entra ID / Azure AD → App registrations → your app):
+
+1. Add **application** permissions: `Files.Read.All`, `Sites.Read.All`,
+   `ChannelMessage.Read.All` (add `Chat.Read.All` for chats).
+2. **Grant admin consent** for the tenant.
+3. Export the three environment variables above — that is the only place
+   credentials ever exist.
+
+What it does, and what it deliberately does not:
+
+- Reads text-extractable documents (`.txt`, `.md`, `.csv`, `.json`, `.html`,
+  `.xml`, `.log`, and `.docx` via stdlib `zipfile` + XML parsing) and Teams
+  messages with replies; binary/media files are skipped.
+- Stores only normalized archive records — **raw Graph JSON never enters the
+  index**.
+- Honors Graph throttling: `429` waits the `Retry-After` header, `5xx`
+  retries with exponential backoff and a bounded attempt count.
+- Caches the access token in memory and refreshes it before expiry.
+- Missing credentials print one actionable line and exit `2` — non-zero, no
+  traceback, no partial run. Secrets are never written to disk or logged.
+
+CLI flags: `--db`, `--site`, `--site-name`, `--drive`, `--team`, `--channel`,
+`--limit`, `--no-replies`, `--dry-run`.
 
 ## 🗣️ Arabic, done right
 
@@ -75,6 +131,7 @@ import    add data (whatsapp / takeout / csv / text / stdin)
 search    full-text search, EN + AR
 ask       AI answer over your archive (cites sources)
 stats     archive statistics
+ingest    pull SharePoint / OneDrive / Teams via Microsoft Graph
 --db      choose archive location (default ~/.archivepilot/archive.db)
 ```
 
@@ -92,9 +149,11 @@ archivepilot/
 ├── cli.py        command-line interface
 ├── db.py         SQLite + FTS5 storage layer
 ├── importers.py  WhatsApp / Takeout / CSV / text / stdin
+├── graph.py      Microsoft Graph transport: token cache, paging, retries
+├── ingest.py     SharePoint / OneDrive / Teams → archive records + CLI
 ├── arabic.py     Arabic normalization for search
 ├── ask.py        AI answers over local context (OpenAI-compatible)
-└── tests/        14 unit tests, stdlib unittest
+└── tests/        52 unit tests, stdlib unittest (Graph tests fully mocked)
 ```
 
 ## ✅ Roadmap
@@ -103,6 +162,7 @@ archivepilot/
 - [ ] Encrypted archives (SQLCipher)
 - [ ] Telegram/WhatsApp bot front-end
 - [ ] Docker image (optional — zero-deps means you won't need it)
+- [ ] Outlook mail + calendar ingestion (Microsoft Graph)
 
 ## 🤝 Contributing
 
