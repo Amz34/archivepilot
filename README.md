@@ -19,7 +19,7 @@ Just SQLite + Python stdlib.
 | Search tools break on Arabic (diacritics, ال-, أ/إ/آ) | Arabic-aware normalization built in |
 | "Ask AI" tools upload your data to strangers | AI reads *your* local context, cites sources |
 | Heavy tools need Docker + 20 dependencies | **Zero dependencies. `python3 -m archivepilot`** |
-| Questions like "meeting kab hai?" | bm25-ranked OR search → natural questions just work |
+| Natural-language questions ("When is the meeting?") | BM25-ranked OR search — questions just work |
 
 ## 🚀 Quick start
 
@@ -41,8 +41,8 @@ python3 -m archivepilot search "موقع جديد"
 
 # 5. Ask AI over YOUR data (DeepSeek by default, any OpenAI-compatible API)
 export AP_API_KEY=sk-...          # or OPENAI_API_KEY / DEEPSEEK_API_KEY
-python3 -m archivepilot ask "meeting kab hai?"
-# → "Meeting 5 baje hai, site deploy ke liye. (Source: WhatsApp archive, 20/08/2026)"
+python3 -m archivepilot ask "When is the meeting?"
+# → "The meeting is at 5 PM, regarding the site deployment. (Source: WhatsApp archive, 20/08/2026)"
 ```
 
 No API key? `ask` falls back to local mode and shows the top matching

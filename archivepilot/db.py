@@ -56,9 +56,9 @@ class Archive:
     def search(self, query: str, limit: int = 20):
         """Full-text search (Arabic-normalized).
 
-        Tokens are OR-joined and ranked with bm25, so natural-language
-        questions like "meeting kab hai?" still surface the meeting entry
-        even though "kab" and "hai" appear nowhere in it.
+        Tokens are OR-joined and ranked with bm25, so a natural-language
+        question such as "When is the meeting?" still surfaces the relevant
+        entry even when none of the question words appear verbatim in it.
         """
         q = normalize(query)
         if not q:
