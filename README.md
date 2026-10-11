@@ -1,6 +1,13 @@
 # ArchivePilot
 
+[![CI](https://github.com/Amz34/archivepilot/actions/workflows/ci.yml/badge.svg)](https://github.com/Amz34/archivepilot/actions/workflows/ci.yml)
+![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue)
+![Dependencies](https://img.shields.io/badge/dependencies-none-success)
+![License: MIT](https://img.shields.io/badge/license-MIT-green)
+
 > **Your data is scattered. Your archive should be one place.**
+
+![Scattered sources converging into one local archive](assets/archivepilot-overview.jpg)
 
 WhatsApp chats, Google Takeout, CSVs, notes — ArchivePilot puts them all in
 one **local-first, zero-dependency** archive with full-text search in
